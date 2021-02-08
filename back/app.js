@@ -29,15 +29,20 @@ if (process.env.NODE_ENV === 'production') {
   app.use(morgan('combined'));
   app.use(hpp());
   app.use(helmet());
+  app.use(cors({
+    origin: 'http://y2gcoder.site',
+    credentials: true,  //Access-Control-Allow-Credentials, cookie 전달해주려면 true
+  }));
 } else {
   app.use(morgan('dev'));
+  app.use(cors({
+    origin: true, // Access-Control-Allow-Origin
+    // origin: ['http://localhost:3060', 'http://y2gcoder.site'],
+    credentials: true,  //Access-Control-Allow-Credentials, cookie 전달해주려면 true
+  }));
 }
 
-app.use(cors({
-  origin: true, // Access-Control-Allow-Origin
-  // origin: ['http://localhost:3060', 'http://y2gcoder.site'],
-  credentials: true,  //Access-Control-Allow-Credentials, cookie 전달해주려면 true
-}));
+
 app.use('/', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
