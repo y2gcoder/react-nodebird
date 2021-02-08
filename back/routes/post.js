@@ -2,6 +2,8 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path'); //node 제공
 const fs = require('fs');
+const multerS3 = require('multer-s3');
+const AWS = require('aws-sdk');
 
 const { Post, Comment, Image, User, Hashtag } = require('../models');
 const { isLoggedIn } = require('./middlewares');
@@ -15,19 +17,34 @@ try {
   fs.mkdirSync('uploads');
 }
 
+AWS.config.update({
+  accessKeyId: process.env.S3_ACCESS_KEY_ID,
+  secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+  region: 'ap-northeast-2'
+});
 const upload = multer({
-  storage: multer.diskStorage({
-    destination(req, file, done) {
-      done(null, 'uploads');
-    },
-    filename(req, file, done) {                     //제로초.png
-      const ext = path.extname(file.originalname);  // 확장자 추출(.png)
-      const basename = path.basename(file.originalname, ext);// 제로초
-      done(null, basename + "_" + new Date().getTime() + ext); //제로초1752.png
+  storage: multerS3({
+    s3: new AWS.S3(),
+    bucket: 'react-nodebird-s3-y2gcoder',
+    key(req, file, cb) {
+      cb(null, `original/${Date.now()}_${path.basename(file.originalname)}`)
     }
   }),
   limits: { fileSize: 20 * 1024 * 1024 }, // 20mb
 });
+// const upload = multer({
+//   storage: multer.diskStorage({
+//     destination(req, file, done) {
+//       done(null, 'uploads');
+//     },
+//     filename(req, file, done) {                     //제로초.png
+//       const ext = path.extname(file.originalname);  // 확장자 추출(.png)
+//       const basename = path.basename(file.originalname, ext);// 제로초
+//       done(null, basename + "_" + new Date().getTime() + ext); //제로초1752.png
+//     }
+//   }),
+//   limits: { fileSize: 20 * 1024 * 1024 }, // 20mb
+// });
 //한 장 올릴 거면 upload.single을 써라. text나 json만 있으면 upload.none, fileInput이 두 개 이상 있을 때는 fields
 // 이미 upload.array에서 이미지를 업로드하고, 콜백은 그 뒤에 실행됨.
 // req.files에 업로드된 이미지의 정보가 들어있음.
@@ -81,7 +98,8 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
 
 router.post('/images', isLoggedIn, upload.array('image'), (req, res, next) => { 
   console.log(req.files);
-  res.status(200).json(req.files.map((v) => v.filename));
+  // res.status(200).json(req.files.map((v) => v.filename));  local
+  res.status(200).json(req.files.map((v) => v.location)); // s3
 });
 
 router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
