@@ -35,7 +35,7 @@ if (process.env.NODE_ENV === 'production') {
 
 app.use(cors({
   origin: true, // Access-Control-Allow-Origin
-  // origin: ['http://localhost:3060', 'nodebird.com'],
+  // origin: ['http://localhost:3060', 'http://y2gcoder.site'],
   credentials: true,  //Access-Control-Allow-Credentials, cookie 전달해주려면 true
 }));
 app.use('/', express.static(path.join(__dirname, 'uploads')));
@@ -46,6 +46,11 @@ app.use(session({
   saveUninitialized: false,
   resave: false,
   secret: process.env.COOKIE_SECRET,
+  cookie: {
+    httpOnly: true,
+    secure: false,
+    domain: process.env.NODE_ENV === 'production' && '.y2gcoder.site'
+  }
 }));
 app.use(passport.initialize());
 app.use(passport.session());
