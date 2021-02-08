@@ -3,3 +3,4 @@ react-nodebird.pem
 node_modules
 .env
 .next
+.DS_Store
