@@ -99,7 +99,8 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
 router.post('/images', isLoggedIn, upload.array('image'), (req, res, next) => { 
   console.log(req.files);
   // res.status(200).json(req.files.map((v) => v.filename));  local
-  res.status(200).json(req.files.map((v) => v.location)); // s3
+  // res.status(200).json(req.files.map((v) => v.location)); // s3
+  res.status(200).json(req.files.map((v) => v.location.replace(/\/original\//, '/thumb/'))); // s3 + image-resizing(lambda)
 });
 
 router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
