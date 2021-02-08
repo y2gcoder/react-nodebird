@@ -1,0 +1,23 @@
+import { HYDRATE } from 'next-redux-wrapper';
+import { combineReducers } from 'redux';
+
+import user from './user';
+import post from './post';
+
+// (이전 상태, 액션) => 다음 상태
+const rootReducer = (state, action) => { // 확장 가능하게 바꿈.
+  switch (action.type) {
+    case HYDRATE:
+      console.log('HYDRATE', action);
+      return action.payload;
+    default: {
+      const combinedReducer = combineReducers({
+        user,
+        post,
+      });
+      return combinedReducer(state, action);
+    }
+  }
+};
+
+export default rootReducer;
