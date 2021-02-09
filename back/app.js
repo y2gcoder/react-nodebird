@@ -25,6 +25,7 @@ db.sequelize.sync()
   .catch(console.error);
 passportConfig();
 
+app.set('trust proxy', 1)
 if (process.env.NODE_ENV === 'production') {
   app.use(morgan('combined'));
   app.use(hpp());
@@ -41,8 +42,6 @@ if (process.env.NODE_ENV === 'production') {
     credentials: true,  //Access-Control-Allow-Credentials, cookie 전달해주려면 true
   }));
 }
-
-
 app.use('/', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
