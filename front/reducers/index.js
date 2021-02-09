@@ -8,7 +8,6 @@ import post from './post';
 const rootReducer = (state, action) => { // 확장 가능하게 바꿈.
   switch (action.type) {
     case HYDRATE:
-      console.log('HYDRATE', action);
       return action.payload;
     default: {
       const combinedReducer = combineReducers({
