@@ -46,17 +46,30 @@ app.use('/', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser(process.env.COOKIE_SECRET));
-app.use(session({
-  saveUninitialized: false,
-  resave: false,
-  secret: process.env.COOKIE_SECRET,
-  proxy: true,
-  cookie: {
-    httpOnly: true,
-    secure: true,
-    domain: process.env.NODE_ENV === 'production' && '.y2gcoder.site'
-  }
-}));
+if (process.env.NODE_ENV === 'production') {
+  app.use(session({
+    saveUninitialized: false,
+    resave: false,
+    secret: process.env.COOKIE_SECRET,
+    proxy: true,
+    cookie: {
+      httpOnly: true,
+      secure: true,
+      domain: process.env.NODE_ENV === 'production' && '.y2gcoder.site'
+    }
+  }));
+} else {
+  app.use(session({
+    saveUninitialized: false,
+    resave: false,
+    secret: process.env.COOKIE_SECRET,
+    cookie: {
+      httpOnly: true,
+      secure: false,
+    }
+  }));
+}
+
 app.use(passport.initialize());
 app.use(passport.session());
 

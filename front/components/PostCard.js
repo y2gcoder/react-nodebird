@@ -81,7 +81,7 @@ function PostCard({ post }) {
                 {id && post.User.id === id
                   ? (
                     <>
-                      <Button>수정</Button>
+                      {!post.RetweetId && <Button>수정</Button>}
                       <Button type="danger" loading={removePostLoading} onClick={onRemovePost}>삭제</Button>
                     </>
                   )
