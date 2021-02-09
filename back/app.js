@@ -30,7 +30,7 @@ if (process.env.NODE_ENV === 'production') {
   app.use(hpp());
   app.use(helmet());
   app.use(cors({
-    origin: 'http://y2gcoder.site',
+    origin: 'https://y2gcoder.site',
     credentials: true,  //Access-Control-Allow-Credentials, cookie 전달해주려면 true
   }));
 } else {
@@ -53,7 +53,7 @@ app.use(session({
   secret: process.env.COOKIE_SECRET,
   cookie: {
     httpOnly: true,
-    secure: false,
+    secure: true,
     domain: process.env.NODE_ENV === 'production' && '.y2gcoder.site'
   }
 }));
